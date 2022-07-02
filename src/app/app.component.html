@@ -1,0 +1,54 @@
+<div class="content">
+  <div class="title">
+    <h1>Crypto</h1>
+    <i class="pi pi-chart-line"></i>
+  </div>
+
+  <div class="subscribe-container">
+    <input type="text"
+           pInputText
+           [(ngModel)]="searchingCoin"
+           placeholder="Enter asset (example: BTC/USD)"/>
+
+    <button pButton
+            label="Subscribe"
+            icon="pi pi-send"
+            [loading]="loadSubscribe"
+            (click)="subscribeToCrypto()"
+            [disabled]="!searchingCoin"></button>
+  </div>
+
+  <div class="data-container" *ngIf="historyData.datasets[0].data.length">
+    <div class="market-data-container">
+      <h2>Market data:</h2>
+
+      <p-card class="market-data">
+        <div *ngIf="!marketData; else listMarketData" class="progress-container">
+          <p>Please wait, we are connecting to the server and wait first trade operation</p>
+          <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+        </div>
+
+        <ng-template #listMarketData>
+          <div>Symbol: <span>{{ searchingCoin }}</span></div>
+          <div>Price: <span>{{ marketData?.price | number:'1.1-3' }}</span></div>
+          <div>Time: <span>{{ marketData?.time_coinapi | date : 'MMM d h:mm a' }}</span></div>
+        </ng-template>
+      </p-card>
+    </div>
+
+    <div class="charting-data">
+      <div class="period-selector">
+        <p-selectButton [options]="periodTypeList"
+                        optionLabel="display_name"
+                        [ngModel]="selectedPeriod"
+                        (ngModelChange)="changePeriod($event)"></p-selectButton>
+      </div>
+
+      <p-chart type="line"
+               [data]="historyData"
+               [options]="basicOptions"></p-chart>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>
